@@ -17,3 +17,8 @@ def test_save10_takes_ten_percent_off():
 # Next: write a failing test for the next rule, make it pass, refactor. Repeat.
 # Think edge cases: rounding, case/whitespace, minimums, expiry date boundary,
 # unknown code, and a total that would otherwise go negative.
+
+# Test 2 - The discount rounds down to a whole cent.
+def test_rounds_discount_down():
+    # 10% of 1,005 is 100.5 -> discount rounds DOWN to 100 -> total 905
+    assert apply_promo(1_005, "SAVE10", TODAY) == 905
