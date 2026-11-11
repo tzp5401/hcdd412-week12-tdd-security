@@ -49,4 +49,11 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         
         return subtotal_cents - FLAT_DISCOUNT_CENTS
 
+    elif normalized_code == "WELCOME":
+        if today > date(2026, 12, 31):
+            raise PromoError("WELCOME has expired")
+        
+        discount_cents = _percentage_discount(subtotal_cents, 15)
+        return subtotal_cents - discount_cents
+
     return subtotal_cents
