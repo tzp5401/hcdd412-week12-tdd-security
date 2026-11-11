@@ -22,6 +22,9 @@ class PromoError(ValueError):
     """Raised when a promo code cannot be applied."""
 
 SAVE10_CODE = "SAVE10"
+FLAT5_CODE = "FLAT5"
+FLAT5_MINIMUM_CENTS = 2_000
+FLAT_DISCOUNT_CENTS = 500
 
 def _percentage_discount(subtotal_cents: int, percentage: int) -> int:
     """Calculate a percentage discount, rounded down to a whole cent."""
@@ -40,10 +43,10 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         discount_cents = _percentage_discount(subtotal_cents, 10)
         return subtotal_cents - discount_cents
 
-    elif normalized_code == "FLAT5":
-        if subtotal_cents < 2_000:
+    elif normalized_code == FLAT5_CODE:
+        if subtotal_cents < FLAT5_MINIMUM_CENTS:
             raise PromoError("FLAT5 requires a minimum subtotal of $20.00")
         
-        return subtotal_cents - 500
+        return subtotal_cents - FLAT_DISCOUNT_CENTS
 
     return subtotal_cents
