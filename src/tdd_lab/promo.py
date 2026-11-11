@@ -30,7 +30,9 @@ def _percentage_discount(subtotal_cents: int, percentage: int) -> int:
 def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
     """Return the new total in cents after applying ``code``."""
 
-    if code == SAVE10_CODE:
+    normalized_code = code.strip().upper()
+
+    if normalized_code == SAVE10_CODE:
         discount_cents = _percentage_discount(subtotal_cents, 10)
         return subtotal_cents - discount_cents
 
