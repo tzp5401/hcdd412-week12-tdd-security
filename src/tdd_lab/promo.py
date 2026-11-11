@@ -40,4 +40,10 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         discount_cents = _percentage_discount(subtotal_cents, 10)
         return subtotal_cents - discount_cents
 
+    elif normalized_code == "FLAT5":
+        if subtotal_cents < 2_000:
+            raise PromoError("FLAT5 requires a minimum subtotal of $20.00")
+        
+        return subtotal_cents - 500
+
     return subtotal_cents
