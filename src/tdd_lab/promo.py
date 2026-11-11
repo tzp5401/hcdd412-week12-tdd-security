@@ -27,10 +27,14 @@ def _percentage_discount(subtotal_cents: int, percentage: int) -> int:
     """Calculate a percentage discount, rounded down to a whole cent."""
     return subtotal_cents * percentage // 100
 
+def _normalize_code(code: str) -> str:
+    """Normalize a promo code by removing surrounding whitespace and uppercasing it."""
+    return code.strip().upper()
+
 def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
     """Return the new total in cents after applying ``code``."""
 
-    normalized_code = code.strip().upper()
+    normalized_code = _normalize_code(code)
 
     if normalized_code == SAVE10_CODE:
         discount_cents = _percentage_discount(subtotal_cents, 10)
