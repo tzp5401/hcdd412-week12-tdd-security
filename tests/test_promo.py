@@ -22,3 +22,8 @@ def test_save10_takes_ten_percent_off():
 def test_rounds_discount_down():
     # 10% of 1,005 is 100.5 -> discount rounds DOWN to 100 -> total 905
     assert apply_promo(1_005, "SAVE10", TODAY) == 905
+
+# Test 3 - Promo codes ignore case and surrounding whitespace.
+def test_codes_ignore_case_and_whitespace():
+    # Test that leading and trailing whitespace is ignored.
+    assert apply_promo(10_000, " save10 ", TODAY) == 9_000
