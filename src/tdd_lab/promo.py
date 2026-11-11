@@ -22,9 +22,14 @@ class PromoError(ValueError):
     """Raised when a promo code cannot be applied."""
 
 SAVE10_CODE = "SAVE10"
+
 FLAT5_CODE = "FLAT5"
 FLAT5_MINIMUM_CENTS = 2_000
 FLAT_DISCOUNT_CENTS = 500
+
+WELCOME_CODE = "WELCOME"
+WELCOME_LAST_DAY = date(2026, 12, 31)
+WELCOME_DISCOUNT_PERCENT = 15
 
 def _percentage_discount(subtotal_cents: int, percentage: int) -> int:
     """Calculate a percentage discount, rounded down to a whole cent."""
@@ -49,11 +54,15 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         
         return subtotal_cents - FLAT_DISCOUNT_CENTS
 
-    elif normalized_code == "WELCOME":
-        if today > date(2026, 12, 31):
+    elif normalized_code == WELCOME_CODE:
+        if today > WELCOME_LAST_DAY:
             raise PromoError("WELCOME has expired")
         
-        discount_cents = _percentage_discount(subtotal_cents, 15)
+        discount_cents = _percentage_discount(
+            subtotal_cents, 
+            WELCOME_DISCOUNT_PERCENT
+        )
+        
         return subtotal_cents - discount_cents
 
     return subtotal_cents

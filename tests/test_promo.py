@@ -42,8 +42,17 @@ def test_flat5_minimum_boundary():
 # Test 5 - WELCOME applies only on or before December 31, 2026.
 def test_welcome_expiry_boundary():
     # The last valid date is December 31, 2026.
-    assert apply_promo(10_000, "WELCOME", date(2026, 12, 31)) == 8_500
-    # January 1, 2027 is expired.
+    assert apply_promo(
+        10_000,
+        "WELCOME",
+        date(2026, 12, 31)
+    ) == 8_500
+
+    # January 1, 2027 is too late.
     with pytest.raises(PromoError):
-        apply_promo(10_000, "WELCOME", date(2027, 1, 1))
+        apply_promo(
+            10_000,
+            "WELCOME",
+            date(2027, 1, 1)
+        )
 
