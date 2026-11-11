@@ -3,6 +3,7 @@ from datetime import date
 
 import pytest
 
+from tdd_lab import promo
 from tdd_lab.promo import PromoError, apply_promo
 
 TODAY = date(2026, 11, 9)
@@ -61,3 +62,15 @@ def test_unknown_code_raises_promo_error():
     # Test that an unknown promo code raises PromoError.
     with pytest.raises(PromoError):
         apply_promo(10_000, "NOTREAL", TODAY)
+
+# Test 7 - The total never goes below zero.
+def test_total_never_goes_below_zero(monkeypatch):
+    # Simulate an unusually large discount.
+    monkeypatch.setattr(
+        promo,
+        "FLAT5_DISCOUNT_CENTS",
+        5_000
+    )
+
+    # $20 subtotal - simulated $50 discount must not be negative.
+    assert promo.apply_promo(2_000, "FLAT5", TODAY) == 0
