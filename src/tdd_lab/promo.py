@@ -25,7 +25,7 @@ SAVE10_CODE = "SAVE10"
 
 FLAT5_CODE = "FLAT5"
 FLAT5_MINIMUM_CENTS = 2_000
-FLAT_DISCOUNT_CENTS = 500
+FLAT5_DISCOUNT_CENTS = 500
 
 WELCOME_CODE = "WELCOME"
 WELCOME_LAST_DAY = date(2026, 12, 31)
@@ -52,7 +52,7 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         if subtotal_cents < FLAT5_MINIMUM_CENTS:
             raise PromoError("FLAT5 requires a minimum subtotal of $20.00")
         
-        return subtotal_cents - FLAT_DISCOUNT_CENTS
+        return max(0, subtotal_cents - FLAT5_DISCOUNT_CENTS)
 
     elif normalized_code == WELCOME_CODE:
         if today > WELCOME_LAST_DAY:
