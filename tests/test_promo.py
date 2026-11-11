@@ -38,3 +38,12 @@ def test_flat5_minimum_boundary():
     # One cent below $20.00 must be rejected.
     with pytest.raises(PromoError):
         apply_promo(1_999, "FLAT5", TODAY)
+
+# Test 5 - WELCOME applies only on or before December 31, 2026.
+def test_welcome_expiry_boundary():
+    # The last valid date is December 31, 2026.
+    assert apply_promo(10_000, "WELCOME", date(2026, 12, 31)) == 8_500
+    # January 1, 2027 is expired.
+    with pytest.raises(PromoError):
+        apply_promo(10_000, "WELCOME", date(2027, 1, 1))
+
