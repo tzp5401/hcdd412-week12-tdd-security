@@ -39,6 +39,13 @@ def _normalize_code(code: str) -> str:
     """Normalize a promo code by removing surrounding whitespace and uppercasing it."""
     return code.strip().upper()
 
+def _non_negative_total(
+    subtotal_cents: int,
+    discount_cents: int
+) -> int:
+    """Calculate a discounted total that cannot be negative."""
+    return max(subtotal_cents - discount_cents, 0)
+
 def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
     """Return the new total in cents after applying ``code``."""
 
@@ -46,13 +53,12 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
 
     if normalized_code == SAVE10_CODE:
         discount_cents = _percentage_discount(subtotal_cents, 10)
-        return subtotal_cents - discount_cents
 
     elif normalized_code == FLAT5_CODE:
         if subtotal_cents < FLAT5_MINIMUM_CENTS:
             raise PromoError("FLAT5 requires a minimum subtotal of $20.00")
         
-        return max(0, subtotal_cents - FLAT5_DISCOUNT_CENTS)
+        discount_cents = FLAT5_DISCOUNT_CENTS
 
     elif normalized_code == WELCOME_CODE:
         if today > WELCOME_LAST_DAY:
@@ -62,9 +68,10 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
             subtotal_cents, 
             WELCOME_DISCOUNT_PERCENT
         )
-        
-        return subtotal_cents - discount_cents
+    
+    else:
+        raise PromoError(
+            f"Unknown promotion code: {normalized_code!r}"
+        )
 
-    raise PromoError(
-        f"Unknown promotion code: {normalized_code!r}"
-    )
+    return _non_negative_total(subtotal_cents, discount_cents)
