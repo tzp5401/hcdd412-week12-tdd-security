@@ -12,15 +12,19 @@ Business rules (from the product owner):
 
 All money is integer cents. Dates are ``datetime.date``.
 
-Right now this is only a stub. Write failing tests FIRST (Red), then make them
-pass (Green), then clean up (Refactor).
+This file started as a stub and was completed using TDD:
+write failing tests FIRST (Red), make them pass (Green),
+then clean up (Refactor).
 """
+
 from datetime import date
 
 
 class PromoError(ValueError):
     """Raised when a promo code cannot be applied."""
 
+
+# Promotion constants
 SAVE10_CODE = "SAVE10"
 
 FLAT5_CODE = "FLAT5"
@@ -31,13 +35,16 @@ WELCOME_CODE = "WELCOME"
 WELCOME_LAST_DAY = date(2026, 12, 31)
 WELCOME_DISCOUNT_PERCENT = 15
 
+
 def _percentage_discount(subtotal_cents: int, percentage: int) -> int:
     """Calculate a percentage discount, rounded down to a whole cent."""
     return subtotal_cents * percentage // 100
 
+
 def _normalize_code(code: str) -> str:
-    """Normalize a promo code by removing surrounding whitespace and uppercasing it."""
+    """Remove surrounding whitespace and uppercase the promo code."""
     return code.strip().upper()
+
 
 def _non_negative_total(
     subtotal_cents: int,
@@ -46,8 +53,9 @@ def _non_negative_total(
     """Calculate a discounted total that cannot be negative."""
     return max(subtotal_cents - discount_cents, 0)
 
+
 def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
-    """Return the new total in cents after applying ``code``."""
+    """Return the new total in cents after applying a promo code."""
 
     normalized_code = _normalize_code(code)
 
@@ -57,18 +65,18 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
     elif normalized_code == FLAT5_CODE:
         if subtotal_cents < FLAT5_MINIMUM_CENTS:
             raise PromoError("FLAT5 requires a minimum subtotal of $20.00")
-        
+
         discount_cents = FLAT5_DISCOUNT_CENTS
 
     elif normalized_code == WELCOME_CODE:
         if today > WELCOME_LAST_DAY:
             raise PromoError("WELCOME has expired")
-        
+
         discount_cents = _percentage_discount(
-            subtotal_cents, 
+            subtotal_cents,
             WELCOME_DISCOUNT_PERCENT
         )
-    
+
     else:
         raise PromoError(
             f"Unknown promotion code: {normalized_code!r}"
