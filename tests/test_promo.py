@@ -1,7 +1,9 @@
 """Your TDD workspace. The first test is deliberately RED -- that is step one."""
 from datetime import date
 
-from tdd_lab.promo import apply_promo
+import pytest
+
+from tdd_lab.promo import PromoError, apply_promo
 
 TODAY = date(2026, 11, 9)
 
@@ -27,3 +29,12 @@ def test_rounds_discount_down():
 def test_codes_ignore_case_and_whitespace():
     # Test that leading and trailing whitespace is ignored.
     assert apply_promo(10_000, " save10 ", TODAY) == 9_000
+
+# Test 4 - FLAT5 applies only when the subtotal is at least $20.00.
+def test_flat5_minimum_boundary():
+    # Exactly $20.00 qualifies.
+    assert apply_promo(2_000, "FLAT5", TODAY) == 1_500
+
+    # One cent below $20.00 must be rejected.
+    with pytest.raises(PromoError):
+        apply_promo(1_999, "FLAT5", TODAY)
