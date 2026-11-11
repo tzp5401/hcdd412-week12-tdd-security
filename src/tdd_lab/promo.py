@@ -65,4 +65,4 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
         
         return subtotal_cents - discount_cents
 
-    return subtotal_cents
+    raise PromoError("Unknown promotion code.")
