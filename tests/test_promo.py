@@ -56,3 +56,8 @@ def test_welcome_expiry_boundary():
             date(2027, 1, 1)
         )
 
+# Test 6 - An unknown promo code raises PromoError.
+def test_unknown_code_raises_promo_error():
+    # Test that an unknown promo code raises PromoError.
+    with pytest.raises(PromoError):
+        apply_promo(10_000, "NOTREAL", TODAY)
