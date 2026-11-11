@@ -27,10 +27,7 @@ def apply_promo(subtotal_cents: int, code: str, today: date) -> int:
     """Return the new total in cents after applying ``code``."""
 
     if code == SAVE10_CODE:
-        if subtotal_cents == 10_000:
-            return 9_000
-
-    if subtotal_cents == 0:
-        return 0
+        discount_cents = subtotal_cents * 10 // 100
+        return subtotal_cents - discount_cents
 
     return subtotal_cents
