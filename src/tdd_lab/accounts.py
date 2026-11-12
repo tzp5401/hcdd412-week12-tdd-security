@@ -9,7 +9,8 @@ import hmac
 import os
 import sqlite3
 
-SECRET_KEY = "campus-secret-123"  # hard-coded credential
+# Load the secret key from the environment instead of hard-coding it.
+SECRET_KEY = os.environ.get("APP_SECRET_KEY", "")
 
 
 # Password hashing and verification using PBKDF2 with a unique salt per password.
