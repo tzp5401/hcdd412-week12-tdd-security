@@ -13,6 +13,8 @@ from tdd_lab.accounts import (
 )
 # imported archive_report for testing argument handling.
 from tdd_lab.exporter import archive_report
+# imported compute_discount and load_session for testing input handling.
+from tdd_lab.importer import compute_discount, load_session
 from tdd_lab.prompt_guard import SYSTEM_PROMPT, build_prompt
 
 
@@ -92,3 +94,20 @@ def test_archive_report_uses_argument_list(monkeypatch):
     ]
     # Verify that no additional keyword arguments were passed to the fake_call function.
     assert captured["kwargs"] == {}
+
+
+# Test that load_session reads JSON.
+def test_load_session_reads_json():
+    result = load_session(b'{"username": "ada"}')
+    assert result == {"username": "ada"}
+
+
+# Test that compute_discount accepts a literal discount value.
+def test_compute_discount_accepts_literal():
+    assert compute_discount("0.15") == 0.15
+
+
+# Test that compute_discount rejects executable expressions.
+def test_compute_discount_rejects_executable_expression():
+    with pytest.raises((ValueError, SyntaxError)):
+        compute_discount("__import__('os').getcwd()")
