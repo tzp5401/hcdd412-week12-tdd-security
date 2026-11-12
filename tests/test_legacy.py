@@ -11,6 +11,8 @@ from tdd_lab.accounts import (
     hash_password,
     init_db,
 )
+# imported archive_report for testing argument handling.
+from tdd_lab.exporter import archive_report
 from tdd_lab.prompt_guard import SYSTEM_PROMPT, build_prompt
 
 
@@ -55,3 +57,38 @@ def test_password_hash_uses_unique_salts():
     second_hash = hash_password("s3cret!")
     # Identical passwords should have different salted hashes.
     assert first_hash != second_hash
+
+
+# Test that archive_report passes arguments as a list.
+def test_archive_report_uses_argument_list(monkeypatch):
+    captured = {}
+
+    def fake_call(arguments, **kwargs):
+        captured["arguments"] = arguments
+        captured["kwargs"] = kwargs
+        return 0
+
+    # monkeypatch.setattr was used to replace subprocess.call with fake_call.
+    monkeypatch.setattr(
+        "tdd_lab.exporter.subprocess.call",
+        fake_call
+    )
+
+    filename = "report; echo unsafe"
+
+    # Call archive_report with a filename that contains a shell metacharacter.
+    result = archive_report(filename)
+
+    # Verify that archive_report returned the expected result.
+    assert result == 0
+
+    # Verify that the arguments were passed as a list to the fake_call function.
+    assert captured["arguments"] == [
+        "zip",
+        "-q",
+        "archive.zip",
+        "--",
+        filename
+    ]
+    # Verify that no additional keyword arguments were passed to the fake_call function.
+    assert captured["kwargs"] == {}
