@@ -3,7 +3,14 @@ import sqlite3
 
 import pytest
 
-from tdd_lab.accounts import add_user, check_login, find_user, init_db
+from tdd_lab.accounts import (
+    add_user,
+    check_login,
+    find_user,
+    # imported hash_password for testing unique salts.
+    hash_password,
+    init_db,
+)
 from tdd_lab.prompt_guard import SYSTEM_PROMPT, build_prompt
 
 
@@ -34,8 +41,17 @@ def test_prompt_contains_system_prompt_and_question():
     assert SYSTEM_PROMPT in prompt
     assert "When does registration open?" in prompt
 
+
 # Test that SQL injection attempts are rejected.
 def test_find_user_rejects_sql_injection(conn):
     add_user(conn, "ada", "s3cret!")
     # Treating the input as a username, not SQL instructions.
     assert find_user(conn, "' OR 1=1 --") is None
+
+
+# Test that password hashing uses unique salts.
+def test_password_hash_uses_unique_salts():
+    first_hash = hash_password("s3cret!")
+    second_hash = hash_password("s3cret!")
+    # Identical passwords should have different salted hashes.
+    assert first_hash != second_hash
