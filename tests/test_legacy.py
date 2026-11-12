@@ -33,3 +33,9 @@ def test_prompt_contains_system_prompt_and_question():
     prompt = build_prompt("When does registration open?")
     assert SYSTEM_PROMPT in prompt
     assert "When does registration open?" in prompt
+
+
+def test_find_user_rejects_sql_injection(conn):
+    add_user(conn, "ada", "s3cret!")
+    # Treating the input as a username, not SQL instructions.
+    assert find_user(conn, "' OR 1=1 --") is None
